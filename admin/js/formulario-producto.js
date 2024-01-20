@@ -1,4 +1,84 @@
+//JavaScript personalizado evitando la redundación en las funciones principales para la validación
+
+//Elementos del formulario
 const formulario = document.getElementById('formulario-producto');
+const inputs = document.querySelectorAll('#formulario-producto input');
+const selects = document.querySelectorAll('#formulario-producto select');
+
+//Expresiones para la validación en los campos
+const expresiones = {
+    inputModelo: /^[0-9]{1,6}$/,
+    inputProducto: /^.{4,40}$/,
+    inputDetalle: /^.{10,100}$/,
+    inputPeso: /^[0-9.]{1,6}$/,
+    inputMaterial: /^.{1,15}$/,
+    inputStock: /^[0-9]{1,6}$/
+};
+
+//Estado de validación en los campos
+const campos = {
+    inputProducto: false,
+    inputModelo: false,
+    inputDetalle: false,
+    inputPeso: false,
+    inputMaterial: false,
+    inputStock: false,
+    inputTalla: false,
+    inputImagen: false
+};
+
+//Función para validar un campo específico
+const validarCampo = (expresion, input, campo) => {
+    const element = document.getElementById(campo);
+
+    if (expresion.test(input.value)) {
+        element.classList.add('is-valid');
+        element.classList.remove('is-invalid');
+        campos[campo] = true;
+    } else {
+        element.classList.add('is-invalid');
+        element.classList.remove('is-valid');
+        campos[campo] = false;
+    }
+};
+
+//Función de validación para todo el formulario
+const validarFormulario = (e) => {
+    const { name, value } = e.target;
+
+    switch (name) {
+        case 'inputProducto':
+        case 'inputModelo':
+        case 'inputDetalle':
+        case 'inputPeso':
+        case 'inputMaterial':
+        case 'inputStock':
+            validarCampo(expresiones[name], e.target, name);
+            break;
+        case 'inputTalla':
+        case 'inputImagen':
+            campos[name] = value !== "";
+            const element = document.getElementById(name);
+            element.classList.toggle('is-valid', campos[name]);
+            element.classList.toggle('is-invalid', !campos[name]);
+            break;
+    }
+};
+
+//Eventos de los campos de entrada
+inputs.forEach((input) => {
+    input.addEventListener('input', validarFormulario);
+    input.addEventListener('blur', validarFormulario);
+});
+
+//Eventos de los campos de selección
+selects.forEach((select) => {
+    select.addEventListener('blur', validarFormulario);
+});
+
+//JavaScript antiguo
+
+/*const formulario = document.getElementById('formulario-producto');
 const inputs = document.querySelectorAll('#formulario-producto input');
 const selects = document.querySelectorAll('#formulario-producto select');
 
@@ -90,4 +170,4 @@ inputs.forEach((input) => {
 selects.forEach((select) => {
     console.log(select);
     select.addEventListener('blur', validarFormulario);
-});
+});*/
